@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checking your browser...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: #ffffff;
+      color: #111827;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      width: 360px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .progress {
+      width: 100%;
+      height: 16px;
+      background: #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      transition: width 0.3s ease;
+    }
+
+    .start-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #2563eb;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      pointer-events: all;
+      z-index: 2;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>Verify Your Are Human</h2>
+    <p>Click the button to start the security check.</p>
+
+    <div class="progress" id="progressBar">
+      <div class="bar" id="bar"></div>
+      <button class="start-btn" id="startBtn">Click Here</button>
+    </div>
+
+    <div class="status" id="status">Waiting for your click...</div>
+  </div>
+
+<script>
+  const startBtn = document.getElementById("startBtn");
+  const bar = document.getElementById("bar");
+  const status = document.getElementById("status");
+
+  const checks = [
+    "Checking if you are human...",
+    "Analyzing mouse and keyboard behavior...",
+    "Verifying interaction speed...",
+    "Confirming browser activity...",
+    "Finalizing human verification..."
+];
+
+
+  let progress = 0;
+  let step = 0;
+  let interval;
+
+  startBtn.addEventListener("click", () => {
+    // Prevent multiple clicks
+    if (interval) return;
+
+    status.innerText = "Starting security check...";
+    startBtn.style.display = "none"; // hide button
+
+    interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 12) + 8;
+      if (progress > 100) progress = 100;
+
+      bar.style.width = progress + "%";
+
+      if (step < checks.length) {
+        status.innerText = checks[step];
+        step++;
+      }
+
+      if (progress === 100) {
+        clearInterval(interval);
+        status.innerText = "Verification complete!";
+        sessionStorage.setItem("humanVerified", "true");
+        setTimeout(() => {
+          window.location.href = "application.html";
+        }, 500);
+      }
+    }, 700);
+  });
+
+  // Optional bot detection
+  if (!navigator.cookieEnabled || !navigator.userAgent) {
+    document.body.innerHTML = "<h2>Access denied</h2>";
+    throw new Error("Bot detected");
+  }
+</script>
+
+</body>
+</html>
